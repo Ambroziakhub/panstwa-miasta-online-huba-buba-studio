@@ -836,9 +836,6 @@
           <p>
             <strong>ambroziak.hub@gmail.com</strong>
           </p>
-          <p class="form-hint">
-            Wiadomości są monitorowane bezpośrednio przez twórcę aplikacji.
-          </p>
         </div>
 
         <div class="info-card">
@@ -924,7 +921,7 @@
           <div class="step-number">4</div>
           <div class="step-body">
             <div class="step-body-title">Potwierdź operację usunięcia</div>
-            <p>W oknie dialogowym potwierdź zamiar trwałego skasowania konta. Aplikacja podejmie próbę usunięcia rekordu konta z Firebase Authentication oraz usunięcia danych profilowych z bazy.</p>
+            <p>W oknie dialogowym potwierdź żądanie. Aplikacja podejmie próbę usunięcia konta Firebase Authentication i rozpoznanych danych z bazy; błąd może przerwać lub pozostawić część operacji niewykonaną.</p>
           </div>
         </div>
       </div>
@@ -975,7 +972,7 @@
           <span>Ostrzeżenie o bezpieczeństwie: Nigdy nie podawaj haseł</span>
         </div>
         <p>
-          <strong>NIGDY nie podawaj hasła do konta, kodów weryfikacyjnych SMS/e-mail ani tokenów sesyjnych.</strong> Administrator nigdy o nie nie prosi. Do zidentyfikowania konta wystarczy adres e-mail, nick lub Firebase UID.
+          <strong>NIGDY nie podawaj hasła do konta, kodów weryfikacyjnych SMS/e-mail ani tokenów sesyjnych.</strong> Podaj znany Ci identyfikator konta, np. adres e-mail lub Firebase UID. Administrator może poprosić o dodatkowe informacje, jeśli nie będzie mógł ustalić, którego konta dotyczy wniosek.
         </p>
       </div>
 
@@ -1033,7 +1030,6 @@
           </div>
 
           <div id="copy-toast" class="toast-feedback" role="status" aria-live="polite">
-            Pomyślnie skopiowano do schowka! Możesz teraz wkleić treść do swojego programu pocztowego.
           </div>
 
           <div class="button-group">
@@ -1087,13 +1083,10 @@
             <circle cx="9" cy="7" r="4"></circle>
             <polyline points="16 11 18 13 22 9"></polyline>
           </svg>
-          <span>Procedura ręcznej weryfikacji tożsamości i termin realizacji</span>
+          <span>Ręczna obsługa wniosków</span>
         </div>
         <p>
-          <strong>Wnioski są sprawdzane ręcznie przez administratora.</strong> W trosce o ochronę przed nieuprawnionym kasowaniem cudzych kont możemy poprosić o proporcjonalne potwierdzenie tożsamości (np. wysłanie wiadomości bezpośrednio z adresu powiązanego z kontem gry lub potwierdzenie przybliżonej daty założenia konta). Nigdy nie prosimy o hasła ani kody jednorazowe.
-        </p>
-        <p>
-          Wnioski nadesłane drogą mailową rozpatrywane są ręcznie, zazwyczaj w terminie <strong>do 7–14 dni roboczych</strong> od momentu skutecznego dostarczenia wiadomości i potwierdzenia uprawnienia do konta.
+          <strong>Wnioski są obsługiwane ręcznie po otrzymaniu wiadomości.</strong> W razie potrzeby administrator może poprosić o dodatkowe informacje, aby ustalić, czy wniosek dotyczy danego konta. Nie ma automatycznej weryfikacji ani potwierdzonego terminu realizacji. Nigdy nie wysyłaj haseł ani kodów jednorazowych.
         </p>
       </div>
     </section>
@@ -1103,11 +1096,11 @@
       <h2 id="scope-heading">4. Realistyczny Zakres Usuwania i Ograniczenia Techniczne Bazy Danych</h2>
       
       <p class="lead-text">
-        Przejrzystość wobec graczy i wymogów prawnych jest dla nas priorytetem. Poniżej przedstawiamy rzeczywisty sposób działania procedury kasowania oraz techniczne ograniczenia wynikające ze struktury bazy danych.
+        Aplikacja próbuje usunąć rozpoznane dane powiązane z kontem. Nie gwarantuje to usunięcia wszystkich kopii ani rekordów, których aplikacja nie potrafi odnaleźć.
       </p>
 
       <p>
-        <strong>Opis działania procesu:</strong> Aplikacja usuwa konto oraz powiązane dane, które jest w stanie zidentyfikować w ramach procedury usunięcia w konsoli Firebase. W odnalezionych rozmowach prywatnych wiadomości usuniętego autora mogą zostać zastąpione oznaczeniem <em>„Użytkownik usunięty”</em>. Wiadomości drugiego uczestnika rozmowy mogą pozostać w jego skrzynce. Zgłoszenia moderacyjne (<code>moderationReports</code>) mogą nadal zawierać dane niezbędne do weryfikacji naruszeń (w tym kopię treści wiadomości i identyfikator UID zgłoszonego gracza), a starszych lub osieroconych danych aplikacja może nie usunąć w sposób automatyczny. Listy blokowanych graczy na kontach innych użytkowników mogą zachować wpis identyfikatora UID. Wnioski złożone e-mailem są obsługiwane ręcznie.
+        <strong>Opis działania procesu:</strong> Aplikacja podejmuje próbę usunięcia rozpoznanych danych z Realtime Database, a następnie konta Firebase Authentication. Jeśli aktualizacja bazy się powiedzie, ale usunięcie konta nie, albo wystąpi inny błąd, wynik może być częściowy i wymagać kontaktu z administratorem. Aplikacja aktualizuje wiadomości nadawcy tylko w rozmowach znalezionych przez jego skrzynkę; w tych wiadomościach zastępuje tekst oznaczeniem <em>„Użytkownik usunięty”</em> i usuwa wybrane pola nadawcy. Nie jest to anonimizacja kryptograficzna. Inne lub osierocone wiadomości mogą pozostać. Zgłoszenia moderacyjne (<code>moderationReports</code>) mogą nadal zawierać kopię treści i identyfikatory. Listy blokowanych graczy na kontach innych użytkowników mogą zachować UID. Wnioski e-mail są obsługiwane ręcznie.
       </p>
 
       <div class="table-container">
@@ -1124,26 +1117,26 @@
             <tr>
               <td><strong>Konto i Uwierzytelnienie</strong></td>
               <td>Firebase Authentication</td>
-              <td>Trwałe skasowanie rekordu konta, adresu e-mail oraz unieważnienie tokenów sesyjnych.</td>
-              <td>Brak możliwości ponownego logowania na ten sam UID.</td>
+              <td>Aplikacja wywołuje usunięcie konta Firebase Authentication po aktualizacji rozpoznanych danych w bazie.</td>
+              <td>Jeśli którykolwiek etap zakończy się błędem, konto lub część danych może pozostać. Aplikacja nie potwierdza pełnego usunięcia.</td>
             </tr>
             <tr>
               <td><strong>Profil Gracza i Statystyki</strong></td>
-              <td>Firebase Realtime Database (węzeł <code>/users/{uid}</code>)</td>
-              <td>Usunięcie nicku, poziomu gracza, licznika rozegranych gier i bilansu LexiCoins.</td>
-              <td>Zanonimizowane wpisy archiwalne w historycznych tabelach gier mogą pozostać bez powiązania z nickiem.</td>
+              <td>Firebase Realtime Database (<code>/users/{uid}</code>, <code>/playerAccounts/{uid}</code>, <code>/playerStats</code>, <code>/playerProfiles</code>)</td>
+              <td>Usuwane są rozpoznane węzły profilu i statystyk, jeśli aktualizacja bazy się powiedzie.</td>
+              <td>Starsze, osierocone lub nieznane rekordy mogą pozostać; pełne usunięcie nie jest gwarantowane.</td>
             </tr>
             <tr>
               <td><strong>Prywatne Wiadomości (Czat)</strong></td>
               <td>Węzły konwersacji w bazie</td>
-              <td>Wiadomości usuwanego nadawcy w odnalezionych konwersacjach otrzymują etykietę „Użytkownik usunięty”.</td>
-              <td>Wiadomości wysłane przez drugiego uczestnika rozmowy pozostają nienaruszone w jego historii czatu.</td>
+              <td>Wiadomości nadawcy znalezione przez skrzynkę rozmów są aktualizowane: tekst zastępuje etykieta „Użytkownik usunięty”, a wybrane pola nadawcy są usuwane.</td>
+              <td>Nie jest to anonimizacja kryptograficzna. Wiadomości w nieodnalezionych rozmowach oraz wiadomości drugiego uczestnika mogą pozostać.</td>
             </tr>
             <tr>
               <td><strong>Zgłoszenia Moderacyjne (Nadużycia)</strong></td>
               <td>Węzeł <code>/moderationReports</code></td>
-              <td><strong>Nie są usuwane automatycznie.</strong> Przechowywane w celu ochrony społeczności i przeciwdziałania oszustwom.</td>
-              <td>Mogą zawierać UID oraz kopię treści wiadomości stanowiącej naruszenie regulaminu. Brak automatycznego niszczenia po 12 miesiącach.</td>
+              <td>Proces usuwania konta nie usuwa automatycznie tych wpisów.</td>
+              <td>Mogą zawierać UID i kopię treści. Aplikacja nie implementuje automatycznego terminu usunięcia; dodatkowe reguły produkcyjne nie zostały tu potwierdzone.</td>
             </tr>
             <tr>
               <td><strong>Listy Blokowanych Użytkowników</strong></td>
@@ -1160,10 +1153,10 @@
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
             <path d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
           </svg>
-          <span>Sprostowanie dot. okresu retencji raportów moderacyjnych</span>
+          <span>Informacja o zgłoszeniach moderacyjnych</span>
         </div>
         <p>
-          Wcześniejsze wersje polityki wspominały o „automatycznym kasowaniu zgłoszeń po 12 miesiącach” oraz „kryptograficznej anonimizacji”. W obecnej architekturze <strong>nie wdrożono jeszcze zautomatyzowanego procesu kasowania zgłoszeń moderacyjnych po upływie 12 miesięcy</strong>. Zgłoszenia przechowywane są przez administratora ręcznie tak długo, jak jest to konieczne do zapewnienia bezpieczeństwa rozgrywki i rozpatrywania ewentualnych sporów.
+          Kod aplikacji nie usuwa zgłoszeń moderacyjnych podczas usuwania konta i nie określa ich terminu przechowywania. Nie potwierdzono dodatkowych ustawień retencji w środowisku produkcyjnym. Zgłoszenia mogą zawierać dane osobowe, w tym UID i kopię treści wiadomości.
         </p>
       </div>
     </section>
@@ -1268,7 +1261,7 @@
 
       <h3>Wniosek o Kopię Danych (Prawo Dostępu – Art. 15 RODO)</h3>
       <p>
-        Gracz ma prawo zażądać informacji o przetwarzanych danych oraz otrzymania ich kopii. Niniejsza witryna <strong>nie generuje automatycznego pliku JSON w przeglądarce</strong>. Aby uzyskać kopię danych, wyślij wniosek e-mail na adres <strong>ambroziak.hub@gmail.com</strong> z tematem: <code>Wniosek o kopię danych (Art. 15 RODO) – Państwa Miasta</code>, podając swój e-mail konta lub UID. Dane zostaną zestawione i przesłane po weryfikacji tożsamości.
+        Niniejsza witryna <strong>nie generuje automatycznego pliku JSON</strong>. Wniosek o kopię danych można wysłać ręcznie na adres <strong>ambroziak.hub@gmail.com</strong> z tematem <code>Wniosek o kopię danych – Państwa Miasta</code>. Wniosek nie jest automatycznie rejestrowany ani weryfikowany; administrator może poprosić o dodatkowe informacje. Strona nie określa terminu odpowiedzi.
       </p>
     </section>
 
@@ -1283,7 +1276,7 @@
         </summary>
         <div class="faq-content">
           <p>
-            <strong>Nie.</strong> Usunięcie samej aplikacji z pamięci telefonu nie powoduje wykasowania rekordu konta z Firebase Authentication ani danych gracza z bazy Realtime Database. Dotyczy to również kont gościa. Aby dane zostały usunięte, należy użyć opcji wewnątrz aplikacji przed jej odinstalowaniem lub złożyć wniosek e-mail.
+            <strong>Nie.</strong> Usunięcie aplikacji z telefonu nie usuwa samo przez się konta Firebase ani danych z bazy. Można rozpocząć próbę usunięcia w aplikacji albo wysłać e-mail; samo przygotowanie wiadomości na tej stronie nie składa wniosku.
           </p>
         </div>
       </details>
@@ -1295,7 +1288,7 @@
         </summary>
         <div class="faq-content">
           <p>
-            W obecnej architekturze gry wspierana jest wyłącznie ścieżka pełnego usunięcia konta i powiązanych rekordów. Selektywne czyszczenie pojedynczych węzłów mogłoby doprowadzić do niespójności struktury gry wieloosobowej.
+            Aplikacja udostępnia próbę usunięcia konta, ale nie ma osobnych przycisków do czyszczenia wyłącznie czatu lub statystyk. Operacja nie gwarantuje usunięcia każdego powiązanego albo osieroconego rekordu.
           </p>
         </div>
       </details>
@@ -1307,7 +1300,7 @@
         </summary>
         <div class="faq-content">
           <p>
-            W odnalezionych konwersacjach Twoja nazwa zostaje zastąpiona podpisem „Użytkownik usunięty”. Wiadomości drugiego uczestnika pozostają w jego skrzynce, ponieważ stanowią historię jego własnej korespondencji, której nie możemy jednostronnie skasować bez naruszenia integralności jego profilu.
+            Aplikacja próbuje zaktualizować wiadomości nadawcy w rozmowach odnalezionych przez jego skrzynkę. Inne wiadomości mogą pozostać, a operacja może zakończyć się błędem; nie jest to gwarancja kompletnej anonimizacji.
           </p>
         </div>
       </details>
@@ -1319,7 +1312,7 @@
         </summary>
         <div class="faq-content">
           <p>
-            Ta strona jest hostowana statycznie na GitHub Pages. Nie posiada dedykowanego serwera backendowego ani bazy danych do przyjmowania formularzy. Zamiast udawać automatyczną rejestrację wniosku (jak w wersjach testowych), otwarcie programu pocztowego daje graczowi 100% pewności, że wniosek rzeczywiście wyszedł z jego skrzynki pocztowej.
+            Ta strona jest hostowana statycznie na GitHub Pages i nie zapisuje ani nie wysyła wniosku. Link mailto może otworzyć program pocztowy, ale nie potwierdza, że wiadomość została wysłana lub dostarczona. Naciśnij „Wyślij” w programie pocztowym; jeśli nie otworzy się, użyj przycisków kopiowania i wyślij wiadomość ręcznie na ambroziak.hub@gmail.com.
           </p>
         </div>
       </details>
@@ -1331,13 +1324,13 @@
         </summary>
         <div class="faq-content">
           <p>
-            Zgodnie z wytycznymi Google Play Console dotyczącymi usuwania kont:
+            Ta strona opisuje dostępny sposób złożenia żądania, ale jej treść nie potwierdza wypełnienia wszystkich wymagań Google Play:
           </p>
           <ul>
             <li>Strona jest publicznie dostępnym adresem HTTPS bez konieczności logowania.</li>
             <li>Wskazuje dokładną ścieżkę usuwania konta bezpośrednio w aplikacji (Profil Gracza -> „Usuń konto i zresetuj postępy”).</li>
             <li>Umożliwia złożenie wniosku o usunięcie konta przez Internet (dla graczy, którzy odinstalowali aplikację).</li>
-            <li>Precyzyjnie wymienia typy usuwanych i zachowywanych danych wraz z uzasadnieniem technicznym i prawnym.</li>
+            <li>Wskazuje ograniczenia i dane, które mogą pozostać po próbie usunięcia.</li>
           </ul>
         </div>
       </details>
@@ -1354,7 +1347,7 @@
         <p>Kontakt: ambroziak.hub@gmail.com</p>
       </div>
       <div>
-        <p>Polityka Prywatności v3.0 | Zgodna z RODO &amp; Google Play Console</p>
+        <p>Polityka prywatności i procedura usuwania konta</p>
         <p>Wszystkie czcionki serwowane lokalnie z zasobów systemowych urządzenia.</p>
         <p>Brak zewnętrznych skryptów śledzących ani ciasteczek marketingowych.</p>
       </div>
@@ -1459,7 +1452,7 @@ Właściciel Konta`;
       // Attempt to launch the mail client
       window.location.href = mailtoUrl;
 
-      showToast('Otwieranie programu pocztowego... Pamiętaj, aby nacisnąć „Wyślij” w swoim programie!');
+      showToast('Ta strona nie wysłała wniosku. W programie pocztowym naciśnij „Wyślij”; jeśli poczta się nie otworzy, skopiuj treść i wyślij ją na ambroziak.hub@gmail.com.');
     }
 
     function copyEmailBody() {
@@ -1524,3 +1517,6 @@ Właściciel Konta`;
   </script>
 </body>
 </html>
+
+
+{"content":[{"text":"successfully downloaded text file (SHA: 89daaa50f4ad8a9256d2c254fbe055f6febd80e2)","type":"text"},{"resource":{"mimeType":"text/html; charset=utf-8","uri":"repo://Ambroziakhub/panstwa-miasta-online-huba-buba-studio/sha/2ca5b07f1e2e565192f16752e5e44ffb856cf2f8/contents/index.html"},"type":"resource"}]}
